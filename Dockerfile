@@ -16,6 +16,6 @@ MAINTAINER Trickfilm400 <info@trickfilm400.de>
 
 COPY --from=builder /build/node_modules /app/node_modules
 COPY --from=builder /build/dist /app/dist
-COPY --from=builder /build/pacakge*.json /app/
+COPY --from=builder /build/package*.json /app/
 
 CMD ["node", "."]

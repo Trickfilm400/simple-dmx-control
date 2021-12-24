@@ -18,6 +18,8 @@ export class TinkerforgeClass {
     }
 
     public connect() {
+        console.log("Connecting to Tinkerforge");
+        
         this.ipcon.connect(this.host, this.port, console.error);
         this.ipcon.setAutoReconnect(false);
         //region callbacks

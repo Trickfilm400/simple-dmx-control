@@ -8,6 +8,7 @@ const tinkerForge = new TinkerforgeClass(config.get("tinkerforge.host"), config.
 
 const socket = new SocketServer(channelController, tinkerForge);
 
+tinkerForge.connect();
 socket.listen(4224);
 
 process.on('SIGINT', () => {

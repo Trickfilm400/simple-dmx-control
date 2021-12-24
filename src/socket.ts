@@ -3,7 +3,7 @@ import {Server, Socket} from "socket.io";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
 import {ChannelController} from "./dmx/ChannelController";
 import {TinkerforgeClass} from "./tinkerforge";
-
+/** 
 const _io = require('socket.io')(undefined, {
     cors: {
         origin: '*'
@@ -25,7 +25,7 @@ _io.on('connection', function (socket) {
     //}
 
 });
-
+**/
 
 export class SocketServer {
     private server: Server<DefaultEventsMap, DefaultEventsMap>;

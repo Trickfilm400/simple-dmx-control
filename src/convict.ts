@@ -31,7 +31,14 @@ const config = convict({
         }
     },
     lamps: {
-
+        doc: "Lamp Config",
+        format: Object,
+        default: {},
+    },
+    lampGroups: {
+        doc: "LampGroupConfig",
+        format: Object,
+        default: {}
     }
 });
 
@@ -54,7 +61,7 @@ export {
 // 	tinerforge_port
 // 	tinerforge_secret
 //
-// 	lampcount: array of dmx channels
+// 	lampcount: array of dmx channels - das kann man ja ausrechnen, also unnötig i guess
 //
 
 //

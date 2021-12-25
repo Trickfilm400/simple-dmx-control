@@ -15,7 +15,8 @@ export class ChannelController {
     public addLamp(lamp: Lamp) {
         //check if dmx channel is already used
         if (this.channels[lamp.firstChannel] !== undefined) throw new Error("Lamp Channel already in use!");
-        this.channels[lamp.firstChannel] = 0; //set dmx value initially to zero
+        // values initially to zero
+        this.channels.splice(lamp.firstChannel, lamp.channelCount, ...new Array(lamp.channelCount).fill(0)); //set dmx
         //save lamp in map
         this.lampMap.set(lamp.uid, lamp);
         //update blackout array so this array has not to be created every time new
@@ -25,17 +26,23 @@ export class ChannelController {
     public setSingleLamp(lamp: Lamp) {
         //check if dmx channel exists
         if (this.channels[lamp.firstChannel] !== undefined) throw new Error("Lamp Channel not found!");
-        this.channels[lamp.firstChannel] = lamp.value; //set dmx value
+        this.channels.splice(lamp.firstChannel, lamp.channelCount, ...lamp.value); //set dmx value
     }
 
     public getLampByUID(uid: string) {
         return this.lampMap.get(uid);
     }
 
-    public getChannelArray(): number[] {
+    public getOriginalChannelArray(): number[] {
         if (this.blackout)
             return this.blackOutArray;
-        return this.channels; // or with master? => parameter in fn?
+        return this.channels;
+    }
+
+    public getPostMasterChannelArray(): number[] {
+        if (this.blackout)
+            return this.blackOutArray;
+        return this.channelsWithMaster;
     }
 
     public updateMaster(val: number) {

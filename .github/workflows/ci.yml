@@ -8,6 +8,10 @@ on:
     branches: [ rewrite ]
   pull_request:
     branches: [ rewrite ]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  
 
 jobs:
   test:

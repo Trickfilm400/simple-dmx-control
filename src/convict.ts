@@ -40,6 +40,18 @@ const config = convict({
         doc: "LampGroupConfig",
         format: Object,
         default: {}
+    },
+    dmx: {
+        framerate: {
+            doc: "in fps",
+            format: Number,
+            default: 25
+        },
+        passiveUpdate: {
+            doc: "in seconds",
+            format: Number,
+            default: 2
+        },
     }
 });
 

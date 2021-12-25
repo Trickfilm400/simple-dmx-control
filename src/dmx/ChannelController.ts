@@ -9,44 +9,48 @@ export class ChannelController {
     protected lampMap: Map<string, Lamp> = new Map();
     //master value like a master fader of which every channel is affected
     private masterValue = 255;
+    //if true, a dmx value was changed and needs to be written to the DMX adapter
+    public pendingUpdate = true;
 
     private masterMultiplicator = () => this.masterValue / 255;
 
     public addLamp(lamp: Lamp) {
         //check if dmx channel is already used
         if (this.channels[lamp.firstChannel] !== undefined) throw new Error("Lamp Channel already in use!");
-        // values initially to zero
-        this.channels.splice(lamp.firstChannel, lamp.channelCount, ...new Array(lamp.channelCount).fill(0)); //set dmx
         //save lamp in map
         this.lampMap.set(lamp.uid, lamp);
         //update blackout array so this array has not to be created every time new
-        this.blackOutArray = new Array(this.channels.length).fill(0);
+        this.blackOutArray.concat(lamp.value);
+        //pending Update
+        this.pendingUpdate = true;
     }
 
     public setSingleLamp(lamp: Lamp) {
         //check if dmx channel exists
         if (this.channels[lamp.firstChannel] !== undefined) throw new Error("Lamp Channel not found!");
-        this.channels.splice(lamp.firstChannel, lamp.channelCount, ...lamp.value); //set dmx value
+        this.pendingUpdate = true;
     }
 
     public getLampByUID(uid: string) {
         return this.lampMap.get(uid);
     }
 
-    public getOriginalChannelArray(): number[] {
-        if (this.blackout)
-            return this.blackOutArray;
-        return this.channels;
-    }
-
-    public getPostMasterChannelArray(): number[] {
-        if (this.blackout)
-            return this.blackOutArray;
-        return this.channelsWithMaster;
-    }
-
     public updateMaster(val: number) {
         this.masterValue = val;
-        this.channelsWithMaster = this.channels.map(a => a * this.masterMultiplicator());
+    }
+
+    public generateChannelValues(withMasterValue = true) {
+        //check if blackout is enabled and return black
+        if (this.blackout) return this.blackOutArray;
+        //generate channelArray
+        let channelArray: number[] = [];
+        this.lampMap.forEach((lamp) => {
+            channelArray.splice(lamp.firstChannel, lamp.channelCount, ...lamp.value);
+        });
+        //if wanted, map the masterFader value to the channels
+        if (withMasterValue) {
+            channelArray = channelArray.map(x => x * this.masterMultiplicator());
+        }
+        return channelArray;
     }
 }

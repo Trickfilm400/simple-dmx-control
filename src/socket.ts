@@ -57,21 +57,19 @@ export class SocketServer {
         switch (action) {
             case "blackout":
                 this.channelController.blackout = values;
-                this.tinkerforge.write(this.channelController.getOriginalChannelArray());
                 break;
             case "master":
                 this.channelController.updateMaster(values);
-                this.tinkerforge.write(this.channelController.getOriginalChannelArray());
                 break;
             case "singleLamp":
                 let lamp = this.channelController.getLampByUID(values.uid);
                 //todo update channel values
-                lamp.value = values;
+                lamp.value = values.values;
                 if (lamp)
                     this.channelController.setSingleLamp(lamp);
                 //only write if blackout is disabled because it is pointless otherwise
-                if (!this.channelController.blackout)
-                    this.tinkerforge.write(this.channelController.getOriginalChannelArray());
+                //if (!this.channelController.blackout)
+                //    this.tinkerforge.write(this.channelController.getOriginalChannelArray());
                 break;
             case "lampGroup":
                 break;

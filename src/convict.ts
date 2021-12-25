@@ -1,5 +1,6 @@
 import * as convict from "convict";
 import * as path from "path";
+import * as fs from "fs";
 //todo in future=? // 	{blackout_enable (weather the blackout button shoulkd be visible) why???}
 
 // Define a schema
@@ -44,7 +45,8 @@ const config = convict({
 
 
 const env = config.get('env');
-config.loadFile(path.join(__dirname, "..", "config", env + '.json'));
+if (fs.existsSync(path.join(__dirname, "..", "config", env + ".json")))
+    config.loadFile(path.join(__dirname, "..", "config", env + '.json'));
 
 // Perform validation
 config.validate({allowed: 'strict'});

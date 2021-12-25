@@ -16,18 +16,13 @@ export class ChannelController {
 
     public addLamp(lamp: Lamp) {
         //check if dmx channel is already used
-        if (this.channels[lamp.firstChannel] !== undefined) throw new Error("Lamp Channel already in use!");
+        if (Array.from(this.lampMap.values()).find(v => v.firstChannel === lamp.firstChannel)) throw new Error("Lamp" +
+            " Channel already in use!");
         //save lamp in map
         this.lampMap.set(lamp.uid, lamp);
         //update blackout array so this array has not to be created every time new
-        this.blackOutArray.concat(lamp.value);
+        this.blackOutArray.push(...lamp.value);
         //pending Update
-        this.pendingUpdate = true;
-    }
-
-    public setSingleLamp(lamp: Lamp) {
-        //check if dmx channel exists
-        if (this.channels[lamp.firstChannel] !== undefined) throw new Error("Lamp Channel not found!");
         this.pendingUpdate = true;
     }
 
@@ -49,7 +44,7 @@ export class ChannelController {
         });
         //if wanted, map the masterFader value to the channels
         if (withMasterValue) {
-            channelArray = channelArray.map(x => x * this.masterMultiplicator());
+            channelArray = channelArray.map(x => Math.floor(x * this.masterMultiplicator()));
         }
         return channelArray;
     }

@@ -64,9 +64,7 @@ export class SocketServer {
             case "singleLamp":
                 let lamp = this.channelController.getLampByUID(values.uid);
                 //todo update channel values
-                lamp.value = values.values;
-                if (lamp)
-                    this.channelController.setSingleLamp(lamp);
+                if (lamp) lamp.value = values.values;
                 //only write if blackout is disabled because it is pointless otherwise
                 //if (!this.channelController.blackout)
                 //    this.tinkerforge.write(this.channelController.getOriginalChannelArray());

@@ -4,3 +4,5 @@ dist/
 config/development.json
 config/test.json
 config/production.json
+.nyc_output/
+coverage/

@@ -19,7 +19,7 @@ export class Init {
     public setupLamps() {
         for (let lampUID in this.lampConfig) {
             let lampConfig = this.lampConfig[lampUID];
-            let lamp = new Lamp(lampConfig.firstChannel, lampUID, lampConfig.channelCount, lampConfig.displayName);
+            let lamp = new Lamp(lampConfig.firstChannel, lampUID, this.channelController,lampConfig.channelCount, lampConfig.displayName);
             this.channelController.addLamp(lamp);
         }
         console.log(this.channelController);

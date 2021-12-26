@@ -14,5 +14,6 @@ export class WebServer {
     }
     public listen() {
         this.httpServer.listen(config.get("port"))
+        console.log("Server listen on port " + config.get("port"));
     }
 }

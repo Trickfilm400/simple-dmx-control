@@ -27,7 +27,7 @@ export class Init {
             let lamp = new Lamp(lampConfig.firstChannel, lampUID, this.channelController,this.lampTypes.get(lampConfig.type), lampConfig.displayName);
             this.channelController.addLamp(lamp);
         }
-        console.log(this.channelController);
+        //console.log(this.channelController);
     }
 
     public setupLampGroups() {

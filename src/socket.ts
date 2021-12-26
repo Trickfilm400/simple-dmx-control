@@ -4,29 +4,6 @@ import {DefaultEventsMap} from "socket.io/dist/typed-events";
 import {ChannelController} from "./dmx/ChannelController";
 import {TinkerforgeClass} from "./tinkerforge";
 import * as http from "http";
-/**
-const _io = require('socket.io')(undefined, {
-    cors: {
-        origin: '*'
-    }
-});
-
-//////////////////////////////////7777
-_io.on('connection', function (socket) {
-    console.log("New Connection");
-    //socket.emit("init", channelvalues, master_raw, blackout);
-
-    socket.on('dmx', function (action, values) {
-        console.log(action, values, typeof action);
-        _io.sockets.emit("broadcast", action, values);
-        //handler(action, values);
-    });
-    //if (ready) {
-    //    WRITE(channelvalues);
-    //}
-
-});
-**/
 
 export class SocketServer {
     private server: Server<DefaultEventsMap, DefaultEventsMap>;
@@ -41,16 +18,13 @@ export class SocketServer {
     }
 
     connectionListener = (socket: Socket<DefaultEventsMap, DefaultEventsMap>) => {
-        console.log("New Connection");
+        console.log("New Socket.io Connection");
         //socket.emit("init", channelvalues, master_raw, blackout);
-        console.log(this.channelController.lampMap);
-        socket.emit("setup", Array.from(this.channelController.lampMap.values()))
+        //console.log(this.channelController.lampMap);
+        socket.emit("setup", Array.from(this.channelController.lampMap.values()));
 
         socket.on('dmx', this.socketListenerDMX);
-        //if (ready) {
-        //    WRITE(channelvalues);
-        //}
-    }
+    };
 
     socketListenerDMX = (action: "singleLamp" | "lampGroup" | "blackout" | "master", values: any) => {
         switch (action) {
@@ -74,7 +48,7 @@ export class SocketServer {
         console.log(action, values, typeof action);
         this.server.sockets.emit("broadcast", action, values);
         //handler(action, values);
-    }
+    };
 
     listen(port: number) {
         this.server.listen(port);

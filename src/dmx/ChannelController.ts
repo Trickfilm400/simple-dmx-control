@@ -10,9 +10,6 @@ export class ChannelController {
         this.pendingUpdate = true;
     }
     private _blackout = false;
-    //array of raw dmx values
-    protected channels: number[] = [];
-    protected channelsWithMaster: number[] = [];
     private blackOutArray: number[] = [];
     public lampMap: Map<string, Lamp> = new Map();
     //master value like a master fader of which every channel is affected

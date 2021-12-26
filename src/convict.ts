@@ -11,6 +11,12 @@ const config = convict({
         default: 'development',
         env: 'NODE_ENV'
     },
+    port: {
+        doc: 'The Port for express and socket.io',
+        format: Number,
+        default: 4224,
+        env: 'PORT'
+    },
     tinkerforge: {
         host: {
             doc: 'The HOST address to connect TK to.',

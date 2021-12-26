@@ -4,6 +4,7 @@ import {ChannelController} from "./dmx/ChannelController";
 import {config} from "./convict";
 import {Init} from "./init";
 import {ChannelUpdater} from "./dmx/ChannelUpdater";
+import {WebServer} from "./express";
 
 const channelController = new ChannelController();
 
@@ -11,9 +12,12 @@ const init = new Init(channelController);
 init.setupLamps();
 init.setupLampGroups();
 
+const webServer = new WebServer();
+webServer.listen();
+
 const tinkerForge = new TinkerforgeClass(config.get("tinkerforge.host"), config.get("tinkerforge.port"), config.get("tinkerforge.secret"));
 const channelUpdater = new ChannelUpdater(channelController, tinkerForge);
-const socket = new SocketServer(channelController, tinkerForge);
+const socket = new SocketServer(channelController, tinkerForge, webServer.httpServer);
 
 tinkerForge.connect();
 socket.listen(4224);

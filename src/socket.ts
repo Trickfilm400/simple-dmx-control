@@ -3,6 +3,7 @@ import {Server, Socket} from "socket.io";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
 import {ChannelController} from "./dmx/ChannelController";
 import {TinkerforgeClass} from "./tinkerforge";
+import * as http from "http";
 /**
 const _io = require('socket.io')(undefined, {
     cors: {
@@ -32,14 +33,10 @@ export class SocketServer {
     private channelController: ChannelController;
     private tinkerforge: TinkerforgeClass;
 
-    constructor(channelController: ChannelController, tinkerforge: TinkerforgeClass) {
+    constructor(channelController: ChannelController, tinkerforge: TinkerforgeClass, webServer: http.Server) {
         this.channelController = channelController;
         this.tinkerforge = tinkerforge;
-        this.server = new io.Server({
-            cors: {
-                origin: "*"
-            }
-        });
+        this.server = new io.Server(webServer);
         this.server.on("connection", this.connectionListener);
     }
 

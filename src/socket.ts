@@ -4,6 +4,14 @@ import {DefaultEventsMap} from "socket.io/dist/typed-events";
 import {ChannelController} from "./dmx/ChannelController";
 import {TinkerforgeClass} from "./tinkerforge";
 import * as http from "http";
+import {LampGroup} from "./dmx/LampGroup";
+
+type eventCallbackOverload = {
+    (action: "singleLamp", values: { uid: string, values: number[] }): void;
+    (action: "lampGroup", values: { uid: string, values: number[] }): void;
+    (action: "blackout", values: boolean): void;
+    (action: "master", values: number): void;
+}
 
 export class SocketServer {
     private server: Server<DefaultEventsMap, DefaultEventsMap>;
@@ -21,12 +29,12 @@ export class SocketServer {
         console.log("New Socket.io Connection");
         //socket.emit("init", channelvalues, master_raw, blackout);
         //console.log(this.channelController.lampMap);
-        socket.emit("setup", Array.from(this.channelController.lampMap.values()));
+        socket.emit("setup", Array.from(this.channelController.lampMap.values()), Array.from(LampGroup.LampGroupMap.values()));
 
         socket.on('dmx', this.socketListenerDMX);
     };
 
-    socketListenerDMX = (action: "singleLamp" | "lampGroup" | "blackout" | "master", values: any) => {
+    socketListenerDMX: eventCallbackOverload = (action, values) => {
         switch (action) {
             case "blackout":
                 this.channelController.blackout = values;
@@ -38,16 +46,14 @@ export class SocketServer {
                 let lamp = this.channelController.getLampByUID(values.uid);
                 //todo update channel values
                 if (lamp) lamp.value = values.values;
-                //only write if blackout is disabled because it is pointless otherwise
-                //if (!this.channelController.blackout)
-                //    this.tinkerforge.write(this.channelController.getOriginalChannelArray());
                 break;
             case "lampGroup":
+                let group = LampGroup.LampGroupMap.get(values.uid);
+                group.setValue(values.values);
                 break;
         }
         console.log(action, values, typeof action);
         this.server.sockets.emit("broadcast", action, values);
-        //handler(action, values);
     };
 
     listen(port: number) {

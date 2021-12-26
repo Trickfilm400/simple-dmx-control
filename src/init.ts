@@ -6,6 +6,7 @@ import {LampGroupConvict} from "./interfaces/LampGroupConfig";
 import * as fs from "fs";
 import * as path from "path";
 import {LampType} from "./interfaces/LampType";
+import {LampGroup} from "./dmx/LampGroup";
 
 
 export class Init {
@@ -32,6 +33,8 @@ export class Init {
 
     public setupLampGroups() {
         for (let groupName in this.lampGroupConfig) {
+            let groupConfig = this.lampGroupConfig[groupName];
+            new LampGroup(groupName, groupConfig, this.channelController)
         }
     }
 

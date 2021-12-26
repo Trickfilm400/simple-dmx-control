@@ -1,0 +1,9 @@
+{
+	"title": "Generic Dimmer",
+	"flags": [
+		"dimmer"
+	],
+	"channel": [
+		"dimmer"
+	]
+}

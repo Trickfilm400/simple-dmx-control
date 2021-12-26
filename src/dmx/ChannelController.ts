@@ -49,7 +49,7 @@ export class ChannelController {
         //generate channelArray
         let channelArray: number[] = [];
         this.lampMap.forEach((lamp) => {
-            channelArray.splice(lamp.firstChannel, lamp.channelCount, ...lamp.value);
+            channelArray.splice(lamp.firstChannel, lamp.type.channel.length, ...lamp.value);
         });
         //if wanted, map the masterFader value to the channels
         if (withMasterValue) {

@@ -1,7 +1,7 @@
 export interface LampConfig {
     firstChannel: number;
-    channelCount: number;
-    displayName?: string
+    displayName?: string;
+    type: string;
 }
 
 export interface LampConvict {

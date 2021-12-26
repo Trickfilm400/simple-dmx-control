@@ -1,0 +1,13 @@
+{
+	"title": "Generic RGB + Dimmer",
+	"flags": [
+		"rgb",
+		"dimmer"
+	],
+	"channel": [
+		"red",
+		"green",
+		"blue",
+		"dimmer"
+	]
+}

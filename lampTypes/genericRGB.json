@@ -1,0 +1,11 @@
+{
+	"title": "Generic RGB",
+	"flags": [
+		"rgb"
+	],
+	"channel": [
+		"red",
+		"green",
+		"blue"
+	]
+}

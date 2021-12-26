@@ -1,12 +1,20 @@
 import {Lamp} from "./Lamp";
 
 export class ChannelController {
-    public blackout = false;
+    public get blackout(): boolean {
+        return this._blackout;
+    }
+
+    public set blackout(value: boolean) {
+        this._blackout = value;
+        this.pendingUpdate = true;
+    }
+    private _blackout = false;
     //array of raw dmx values
     protected channels: number[] = [];
     protected channelsWithMaster: number[] = [];
     private blackOutArray: number[] = [];
-    protected lampMap: Map<string, Lamp> = new Map();
+    public lampMap: Map<string, Lamp> = new Map();
     //master value like a master fader of which every channel is affected
     private masterValue = 255;
     //if true, a dmx value was changed and needs to be written to the DMX adapter
@@ -32,11 +40,12 @@ export class ChannelController {
 
     public updateMaster(val: number) {
         this.masterValue = val;
+        this.pendingUpdate = true;
     }
 
     public generateChannelValues(withMasterValue = true) {
         //check if blackout is enabled and return black
-        if (this.blackout) return this.blackOutArray;
+        if (this._blackout) return this.blackOutArray;
         //generate channelArray
         let channelArray: number[] = [];
         this.lampMap.forEach((lamp) => {

@@ -40,9 +40,11 @@ export class SocketServer {
         this.server.on("connection", this.connectionListener);
     }
 
-    connectionListener(socket: Socket<DefaultEventsMap, DefaultEventsMap>) {
+    connectionListener = (socket: Socket<DefaultEventsMap, DefaultEventsMap>) => {
         console.log("New Connection");
         //socket.emit("init", channelvalues, master_raw, blackout);
+        console.log(this.channelController.lampMap);
+        socket.emit("setup", Array.from(this.channelController.lampMap.values()))
 
         socket.on('dmx', this.socketListenerDMX);
         //if (ready) {
@@ -50,7 +52,7 @@ export class SocketServer {
         //}
     }
 
-    socketListenerDMX(action: "singleLamp" | "lampGroup" | "blackout" | "master", values: any) {
+    socketListenerDMX = (action: "singleLamp" | "lampGroup" | "blackout" | "master", values: any) => {
         switch (action) {
             case "blackout":
                 this.channelController.blackout = values;

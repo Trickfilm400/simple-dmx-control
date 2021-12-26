@@ -51,7 +51,7 @@ export class Init {
                 console.error(e);
             }
         });
-        console.log(lampTypes);
+        //console.log(lampTypes);
         this.lampTypes = lampTypes;
         return lampTypes;
     }

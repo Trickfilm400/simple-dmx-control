@@ -7,7 +7,15 @@ export class Lamp {
     }
 
     public set value(value: number[]) {
-        this._value = value;
+        //if the value count does not match the supported channel count
+        if (value.length !== this.type.channel.length) {
+            //if more values than by lamp are supported, remove the last elements
+            if (value.length > this.type.channel.length) {
+                value = value.slice(this.type.channel.length, value.length);
+            }
+            //if values are missing, only change the start of the array and leave existing values
+            this._value.splice(0, value.length, ...value);
+        } else this._value = value;
         this.channelController.pendingUpdate = true;
     }
 

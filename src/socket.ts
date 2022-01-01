@@ -27,10 +27,9 @@ export class SocketServer {
 
     connectionListener = (socket: Socket<DefaultEventsMap, DefaultEventsMap>) => {
         console.log("New Socket.io Connection");
-        //socket.emit("init", channelvalues, master_raw, blackout);
-        //console.log(this.channelController.lampMap);
+        //send all config information to the client
         socket.emit("setup", Array.from(this.channelController.lampMap.values()), Array.from(LampGroup.LampGroupMap.values()));
-
+        //listen to "dmx" messages
         socket.on('dmx', this.socketListenerDMX);
     };
 
@@ -44,12 +43,11 @@ export class SocketServer {
                 break;
             case "singleLamp":
                 let lamp = this.channelController.getLampByUID(values.uid);
-                //todo update channel values
                 if (lamp) lamp.value = values.values;
                 break;
             case "lampGroup":
                 let group = LampGroup.LampGroupMap.get(values.uid);
-                group.setValue(values.values);
+                if (group) group.setValue(values.values);
                 break;
         }
         console.log(action, values, typeof action);

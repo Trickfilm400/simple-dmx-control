@@ -8,7 +8,9 @@ import * as path from "path";
 import {LampType} from "./interfaces/LampType";
 import {LampGroup} from "./dmx/LampGroup";
 
-
+/**
+ * @author Trickfilm400
+ */
 export class Init {
     private readonly lampConfig: LampConvict;
     private readonly lampGroupConfig: LampGroupConvict;
@@ -22,24 +24,41 @@ export class Init {
         this.loadLampTypes();
     }
 
+    /**
+     * Import Lamps from user specified config file
+     * @return void
+     * @version 1.0.0
+     * @since 0.0.1
+     */
     public setupLamps() {
         for (let lampUID in this.lampConfig) {
             let lampConfig = this.lampConfig[lampUID];
-            let lamp = new Lamp(lampConfig.firstChannel, lampUID, this.channelController,this.lampTypes.get(lampConfig.type), lampConfig.displayName);
+            let lamp = new Lamp(lampConfig.firstChannel, lampUID, this.channelController, this.lampTypes.get(lampConfig.type), lampConfig.displayName);
             this.channelController.addLamp(lamp);
         }
-        //console.log(this.channelController);
     }
 
+    /**
+     * Import LampGroups from user specified config file
+     * @return void
+     * @version 1.0.0
+     * @since 0.0.1
+     */
     public setupLampGroups() {
         for (let groupName in this.lampGroupConfig) {
             let groupConfig = this.lampGroupConfig[groupName];
-            new LampGroup(groupName, groupConfig, this.channelController)
+            new LampGroup(groupName, groupConfig, this.channelController);
         }
     }
 
+    /**
+     * Import LampTypes from lampTypes folder
+     * @return lampTypes
+     * @version 1.0.0
+     * @since 0.0.1
+     */
     public loadLampTypes() {
-        let files = fs.readdirSync(path.join(__dirname, "..", "lampTypes"))
+        let files = fs.readdirSync(path.join(__dirname, "..", "lampTypes"));
         let lampTypes: Map<string, LampType> = new Map<string, LampType>();
         files.forEach(fileName => {
             let content = fs.readFileSync(path.join(__dirname, "..", "lampTypes", fileName)).toString();

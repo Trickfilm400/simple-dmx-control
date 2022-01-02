@@ -21,7 +21,7 @@ export class SocketServer {
     constructor(channelController: ChannelController, tinkerforge: TinkerforgeClass, webServer: http.Server) {
         this.channelController = channelController;
         this.tinkerforge = tinkerforge;
-        this.server = new io.Server(webServer);
+        this.server = new io.Server(webServer, {cors: {origin: "*"}});
         this.server.on("connection", this.connectionListener);
     }
 

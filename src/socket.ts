@@ -1,39 +1,57 @@
 import * as io from "socket.io";
 import {Server, Socket} from "socket.io";
-import {DefaultEventsMap} from "socket.io/dist/typed-events";
 import {ChannelController} from "./dmx/ChannelController";
 import {TinkerforgeClass} from "./tinkerforge";
 import * as http from "http";
 import {LampGroup} from "./dmx/LampGroup";
-
-type eventCallbackOverload = {
-    (action: "singleLamp", values: { uid: string, values: number[] }): void;
-    (action: "lampGroup", values: { uid: string, values: number[] }): void;
-    (action: "blackout", values: boolean): void;
-    (action: "master", values: number): void;
-}
+import {ClientToServerEvents, dmxEvent, LampGroups, LampSetup, ServerToClientEvents} from "./interfaces/SocketEvents";
 
 export class SocketServer {
-    private server: Server<DefaultEventsMap, DefaultEventsMap>;
+    private server: Server<ClientToServerEvents, ServerToClientEvents>;
     private channelController: ChannelController;
     private tinkerforge: TinkerforgeClass;
 
     constructor(channelController: ChannelController, tinkerforge: TinkerforgeClass, webServer: http.Server) {
         this.channelController = channelController;
         this.tinkerforge = tinkerforge;
-        this.server = new io.Server(webServer, {cors: {origin: "*"}});
+        this.server = new io.Server<ClientToServerEvents, ServerToClientEvents>(webServer, {cors: {origin: "*"}});
         this.server.on("connection", this.connectionListener);
     }
 
-    connectionListener = (socket: Socket<DefaultEventsMap, DefaultEventsMap>) => {
+    private lampMapToWebArray() {
+        let x: LampSetup[] = [];
+        this.channelController.lampMap.forEach(lamp => {
+            x.push({
+                uid: lamp.uid,
+                type: lamp.type.title,
+                values: lamp.getValues(),
+                displayName: lamp.displayName
+            });
+        });
+        return x;
+    }
+
+    private lampGroupMapToWebArray() {
+        let x: LampGroups[] = [];
+        LampGroup.LampGroupMap.forEach(lampGroup => {
+            x.push({
+                lampUIDs: lampGroup.lampUIDs,
+                groupMaster: 0,
+                displayName: lampGroup.displayName
+            });
+        });
+        return x;
+    }
+
+    connectionListener = (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
         console.log("New Socket.io Connection");
         //send all config information to the client
-        socket.emit("setup", Array.from(this.channelController.lampMap.values()), Array.from(LampGroup.LampGroupMap.values()));
+        socket.emit("setup", this.lampMapToWebArray(), this.lampGroupMapToWebArray());
         //listen to "dmx" messages
         socket.on('dmx', this.socketListenerDMX);
     };
 
-    socketListenerDMX: eventCallbackOverload = (action, values) => {
+    socketListenerDMX: dmxEvent = (action, values) => {
         switch (action) {
             case "blackout":
                 this.channelController.blackout = values;

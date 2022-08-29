@@ -24,7 +24,7 @@ function WRITE(x) {
     dmx.writeFrame(x);
 }
 
-//////////////////////////////////7777	
+//////////////////////////////////7777
 io.on('connection', function(socket) {
     console.log("New Connection");
     socket.emit("init", channelvalues, master_raw, blackout);
@@ -37,7 +37,7 @@ io.on('connection', function(socket) {
         if (ready) {
             WRITE(channelvalues);
         }
-    
+
 });
 
 /////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ function handler (lamp, value) {
     }
 	else if (lamp=="blackout") 	{
         if (value) {
-            WRITE(new Array(lampcount).fill(0));    
+            WRITE(new Array(lampcount).fill(0));
             blackout = true;
         } else {
              let temp_channel = [];
@@ -61,7 +61,7 @@ function handler (lamp, value) {
             WRITE(temp_channel);
             blackout = false;
         }
-        
+
     } else if (lamp === "master") {
         let multiplicator = parseInt(value) / 255;
         master_raw = parseInt(value);
@@ -71,22 +71,23 @@ function handler (lamp, value) {
             console.log("MASTER: ", e, master_multiplicator, e * master_multiplicator)
             temp_channel[i] = e * master_multiplicator;
         });
-        if (!blackout) WRITE(temp_channel);    
+        if (!blackout) WRITE(temp_channel);
     }
-	
+
 }
 
 function setlamp(lamp, value) {
-    
+
 	channelvalues[lamp] = value;
     const z = [...channelvalues];
     z[lamp] = Math.floor(value * master_multiplicator);
-    
+
 	WRITE(z);
 }
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
+//region tinkerforge
 
 let ipcon = new Tinkerforge.IPConnection(); // Create IP connection
 let dmx = new Tinkerforge.BrickletDMX("EGm", ipcon);
@@ -134,7 +135,7 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function (connectReason) {
 			handler("dimmer", 255);
 			handler("dimmer_mitte", 50);
 			/////////////////////
-			
+
         },
         function(error) {
             console.log('Could not authenticate: '+error);
@@ -158,7 +159,7 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_ENUMERATE, function(uid, connectedUid
     console.log('Firmware Version:  '+firmwareVersion);
     console.log('Device Identifier: '+deviceIdentifier + '\n\n\n');
 });
-
+//endregion
 
 io.listen(4224);
 

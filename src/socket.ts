@@ -23,8 +23,11 @@ export class SocketServer {
         this.channelController.lampMap.forEach(lamp => {
             x.push({
                 uid: lamp.uid,
-                type: lamp.type.title,
-                values: lamp.getValues(),
+                type: {
+                    title: lamp.type.title,
+                    channel: lamp.type.channel
+                },
+                values: lamp.flagValues,
                 displayName: lamp.displayName
             });
         });
@@ -61,7 +64,7 @@ export class SocketServer {
                 break;
             case "singleLamp":
                 let lamp = this.channelController.getLampByUID(values.uid);
-                if (lamp) lamp.value = values.values;
+                if (lamp) lamp.setValue(values.values);
                 break;
             case "lampGroup":
                 let group = LampGroup.LampGroupMap.get(values.uid);

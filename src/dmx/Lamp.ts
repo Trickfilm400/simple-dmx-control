@@ -1,7 +1,16 @@
 import {ChannelController} from "./ChannelController";
-import {LampType} from "../interfaces/LampType";
+import {FlagValues, LampType, LampTypeFlags} from "../interfaces/LampType";
+import {singleLampValue} from "../interfaces/SocketEvents";
 
 export class Lamp {
+    public get flagValues(): FlagValues {
+        return this._flagValues;
+    }
+
+    public set flagValues(value: FlagValues) {
+        this._flagValues = {};
+        this.channelController.pendingUpdate = true;
+    }
     public get value(): number[] {
         return this._value;
     }
@@ -19,8 +28,46 @@ export class Lamp {
         this.channelController.pendingUpdate = true;
     }
 
+    public setValue(value: singleLampValue) {
+        if (!this._flagValues[value?.type]) throw new Error("type is not existwer")
+        if (!this._flagValues[value.type][value.index]) throw new Error("idnex is not existwer")
+        if (typeof this._flagValues[value.type][value.index] !== typeof value.value) throw new Error("no same type")
+        if (typeof this._flagValues[value.type][value.index] === "object" &&
+        //@ts-ignore todo
+            this._flagValues[value.type][value.index].length !== value.value.length) throw new Error("no same length")
+        this._flagValues[value.type][value.index] = value.value;
+    }
+
     public type: LampType;
     private _value: number[];
+    private _flagValues: FlagValues = {
+        dimmer: [2, 5, 6],
+        //rgb: [56,56,56],
+        rgb: [[56,56,56], [9, 9, 9]]
+    }
+    public getValues(): number[] {
+        //map values to one array
+        let values: number[] = [];
+        this.type.channel.forEach((channelName) => {
+            let [channel, number] = channelName.split("-");
+            let index = parseInt(number) - 1 || 0;
+            switch (channel) {
+                case "red":
+                    values.push(this._flagValues[LampTypeFlags.RGB][index][0]);
+                    break;
+                case "green":
+                    values.push(this._flagValues[LampTypeFlags.RGB][index][1]);
+                    break;
+                case "blue":
+                    values.push(this._flagValues[LampTypeFlags.RGB][index][2]);
+                    break;
+                case "dimmer":
+                    values.push(this._flagValues[LampTypeFlags.DIMMER][index]);
+                    break;
+            }
+        })
+        return values;
+    }
     public readonly firstChannel;
     private channelController: ChannelController;
     public readonly uid;

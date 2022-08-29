@@ -2,12 +2,17 @@
 	"title": "Generic RGB + Dimmer",
 	"flags": [
 		"rgb",
+		"rgb",
+		"rgb",
 		"dimmer"
 	],
 	"channel": [
-		"red",
-		"green",
-		"blue",
+		"red-1",
+		"green-1",
+		"blue-1",
+		"red-2",
+		"green-2",
+		"blue-2",
 		"dimmer"
 	]
 }

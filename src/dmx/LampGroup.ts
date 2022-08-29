@@ -1,7 +1,7 @@
 import {ChannelController} from "./ChannelController";
 import {Lamp} from "./Lamp";
 import {LampGroupConfig} from "../interfaces/LampGroupConfig";
-
+//todo group master
 export class LampGroup {
     public lampUIDs: string[];
     private lamps: Lamp[] = [];

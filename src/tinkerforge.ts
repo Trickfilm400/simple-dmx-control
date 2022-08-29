@@ -77,6 +77,7 @@ export class TinkerforgeClass {
         return this.ipcon.disconnect();
     };
     public write(frame: number[]) {
+        console.log("writing: ", Date.now(), frame);
         if (this.ready)
             return this.dmx.writeFrame(frame);
     }

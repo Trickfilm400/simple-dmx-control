@@ -32,7 +32,7 @@ channelUpdater.startInterval();
 
 //DEBUG ONLY
 let z = channelController.getLampByUID("uid1").value = [9]
-socket.socketListenerDMX("singleLamp", {uid: "uid1", values: z});
+socket.socketListenerDMX("singleLamp", {uid: "uid1", values: {value: [9], type: "rgb", index: 1}});
 
 process.on('SIGINT', () => {
     console.log("Ending...");
